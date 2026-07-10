@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Use Home Assistant Supervisor's standard add-on confinement instead of an incomplete custom AppArmor profile that blocked the base init system.
+
 ## 0.1.1
 
 - Allow the Home Assistant base image init process under the custom AppArmor profile.
