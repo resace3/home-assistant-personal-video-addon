@@ -13,6 +13,7 @@ profile personal_video_studio flags=(attach_disconnected,mediate_deleted) {
   /bin/busybox ix,
   /bin/sh ix,
   /usr/bin/install ix,
+  /init rix,
   /run.sh rix,
   /app/** r,
   /data/ rw,
