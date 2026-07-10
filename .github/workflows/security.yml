@@ -49,7 +49,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - run: docker build --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.21@sha256:8c7a31710f6ed8aeae241b20582a928604d3c32529b826aea7613fdae17047b7 -t local/personal-video-studio:scan personal_video_studio
+      - run: docker build --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.22@sha256:40a638aaea1a0f3784811f17af67540a02da74f219a8ffe1f4ee6aa1221f3bc6 -t local/personal-video-studio:scan personal_video_studio
       - uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
         with:
           image-ref: local/personal-video-studio:scan

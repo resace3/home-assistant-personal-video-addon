@@ -1,6 +1,6 @@
 build_from:
-  aarch64: ghcr.io/home-assistant/aarch64-base-python:3.12-alpine3.21@sha256:cfbfa8da45fb9de859c05bc406bdcb7b43cd4a7917716a1806a744d52083916b
-  amd64: ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.21@sha256:8c7a31710f6ed8aeae241b20582a928604d3c32529b826aea7613fdae17047b7
+  aarch64: ghcr.io/home-assistant/aarch64-base-python:3.12-alpine3.22
+  amd64: ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.22
 labels:
   org.opencontainers.image.title: Personal Video Studio
   org.opencontainers.image.description: Private Home Assistant personal video viewer
