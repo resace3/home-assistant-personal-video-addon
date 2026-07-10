@@ -6,7 +6,8 @@ from pathlib import Path
 
 
 def main() -> None:
-    root = Path("test-results/e2e-media")
+    # Keep fixtures outside Playwright's output directory, which is emptied at startup.
+    root = Path(".e2e-media")
     entries = []
     for period, identifier, color in (
         ("daily", "daily-2026-07-10", "#183252"),
@@ -50,4 +51,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

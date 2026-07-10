@@ -65,7 +65,7 @@ test('catalog text is escaped and cannot execute markup', async ({ page }) => {
     }], total: 1, page: 1, page_size: 50 }),
   }));
   await page.goto('/');
-  await expect(page.getByText('<img src=x onerror="window.__xss=true">', { exact: true })).toBeVisible();
+  await expect(page.getByText('<img src=x onerror="window.__xss=true">', { exact: true }).first()).toBeVisible();
   expect(await page.evaluate(() => (window as typeof window & { __xss?: boolean }).__xss)).toBe(false);
 });
 

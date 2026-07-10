@@ -8,6 +8,7 @@ __pycache__/
 htmlcov/
 node_modules/
 test-results/
+.e2e-media/
 playwright-report/
 screenshots/
 *.mp4
