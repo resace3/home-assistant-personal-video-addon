@@ -1,0 +1,18 @@
+{
+  "name": "home-assistant-personal-video-addon-tests",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.13.1",
+  "scripts": {
+    "lint": "node --check personal_video_studio/app/static/app.js",
+    "typecheck": "tsc --allowJs --checkJs false --noEmit personal_video_studio/app/static/app.js",
+    "test": "node --test tests/frontend.test.mjs",
+    "e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.53.2",
+    "@axe-core/playwright": "4.10.2",
+    "axe-core": "4.10.3",
+    "typescript": "5.8.3"
+  }
+}

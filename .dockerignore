@@ -1,0 +1,16 @@
+.git
+.github
+.venv
+tests
+test-results
+playwright-report
+screenshots
+private
+.env*
+**/__pycache__
+**/.pytest_cache
+**/*.mp4
+**/*.webm
+**/*.vtt
+**/*.webp
+

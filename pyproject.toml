@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "home-assistant-personal-video-addon"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["fastapi==0.115.14", "pydantic==2.11.7", "uvicorn==0.35.0"]
+
+[project.optional-dependencies]
+dev = ["httpx==0.28.1", "mypy==1.16.1", "pytest==8.4.1", "pytest-cov==6.2.1", "ruff==0.12.2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=personal_video_studio.app --cov-fail-under=60"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "S", "UP", "B"]
+ignore = ["E501", "S101", "S603", "S607"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["personal_video_studio"]
