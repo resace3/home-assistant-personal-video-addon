@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "home-assistant-personal-video-addon"
 version = "0.2.3"
 requires-python = ">=3.12"
-dependencies = ["fastapi==0.139.0", "pydantic==2.11.7", "uvicorn==0.35.0"]
+dependencies = ["fastapi==0.139.0", "pydantic==2.13.4", "uvicorn==0.35.0"]
 
 [project.optional-dependencies]
 dev = ["httpx==0.28.1", "mypy==1.16.1", "pytest==9.0.3", "pytest-cov==6.2.1", "ruff==0.12.2"]
