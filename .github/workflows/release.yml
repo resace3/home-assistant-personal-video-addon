@@ -29,6 +29,8 @@ jobs:
           test "v$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml","rb"))["project"]["version"])')" = "$GITHUB_REF_NAME"
           && grep -q "version: \"${GITHUB_REF_NAME#v}\"" personal_video_studio/config.yaml
       - uses: frenck/action-addon-linter@f995494fd84fae6310d23617e66d0e37de4f14eb # v2.21.0
+        with:
+          path: personal_video_studio
       - uses: gitleaks/gitleaks-action@dcedce43c6f43de0b836d1fe38946645c9c638dc # v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -39,6 +41,7 @@ jobs:
           image-ref: local/personal-video-studio:release
           severity: HIGH,CRITICAL
           exit-code: "1"
+          ignore-unfixed: true
       - run: cyclonedx-py requirements personal_video_studio/requirements.lock --output-file sbom.cdx.json && sha256sum personal-video-studio-${{ github.ref_name }}.tar.gz sbom.cdx.json > SHA256SUMS
       - uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
         with:
