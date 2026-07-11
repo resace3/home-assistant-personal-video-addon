@@ -27,10 +27,8 @@ jobs:
         include:
           - arch: amd64
             platform: linux/amd64
-            build_from: ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.21@sha256:8c7a31710f6ed8aeae241b20582a928604d3c32529b826aea7613fdae17047b7
           - arch: aarch64
             platform: linux/arm64
-            build_from: ghcr.io/home-assistant/aarch64-base-python:3.12-alpine3.21@sha256:cfbfa8da45fb9de859c05bc406bdcb7b43cd4a7917716a1806a744d52083916b
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
@@ -41,13 +39,15 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: false
           tags: local/personal-video-studio:${{ matrix.arch }}
-          build-args: BUILD_FROM=${{ matrix.build_from }}
+          build-args: |
+            BUILD_VERSION=0.2.0
+            BUILD_ARCH=${{ matrix.arch }}
       - name: Load and health-test architecture under QEMU
         run: |
-          docker buildx build --platform '${{ matrix.platform }}' --load --build-arg 'BUILD_FROM=${{ matrix.build_from }}' -t local/personal-video-studio:${{ matrix.arch }} personal_video_studio
+          docker buildx build --platform '${{ matrix.platform }}' --load --build-arg BUILD_VERSION=0.2.0 --build-arg 'BUILD_ARCH=${{ matrix.arch }}' -t local/personal-video-studio:${{ matrix.arch }} personal_video_studio
           mkdir -p /tmp/studio-share/personal_video_studio/indexes /tmp/studio-data
           echo '[]' > /tmp/studio-share/personal_video_studio/indexes/all.json
           docker run -d --name studio-${{ matrix.arch }} -p 8765:8099 -e ALLOW_DIRECT=1 -v /tmp/studio-share:/share:ro -v /tmp/studio-data:/data local/personal-video-studio:${{ matrix.arch }}
-          for attempt in $(seq 1 20); do docker exec studio-${{ matrix.arch }} wget -q -O - http://127.0.0.1:8099/api/health && break; sleep 1; done
-          docker exec studio-${{ matrix.arch }} wget -q -O - http://127.0.0.1:8099/api/health
+          for attempt in $(seq 1 20); do docker exec studio-${{ matrix.arch }} curl -fsS http://127.0.0.1:8099/api/health && break; sleep 1; done
+          docker exec studio-${{ matrix.arch }} curl -fsS http://127.0.0.1:8099/api/health
           docker rm -f studio-${{ matrix.arch }}

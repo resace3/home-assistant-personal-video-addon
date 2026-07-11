@@ -24,15 +24,15 @@ The Ingress panel is administrator-only by default because personal videos can r
 1. In Home Assistant, open **Settings → Add-ons → Add-on Store → ⋮ → Repositories**.
 2. Add `https://github.com/resace3/home-assistant-personal-video-addon`.
 3. Install **Personal Video Studio**.
-4. The fixed media path is `/share/personal_video_studio`, matching the runner and AppArmor policy.
+4. The fixed media path is `/share/personal_video_studio`, matching the runner and the Supervisor mount. `/shared` is a different path and will not work.
 5. Start it and enable **Show in sidebar**.
 
 The runner must publish to `/share/personal_video_studio`. The viewer is useful without external APIs and continues showing the last completed videos when generation is unavailable.
 
 ## Interface behavior
 
-- Under 768 CSS pixels: 100dvh scroll-snap feed, muted autoplay attempt, explicit play fallback, right-side like/save/sound actions, safe-area-aware bottom navigation with only Feed, Library, Insights, and Settings.
-- At or above 768 pixels: navigation rail, large player, recent panel, daily/weekly grids, metadata-only counts, and keyboard-friendly controls.
+- Under 1024 CSS pixels: 100dvh scroll-snap feed, muted autoplay attempt, explicit play fallback, right-side like/save/sound actions, safe-area-aware bottom navigation with only Feed, Library, Insights, and Settings.
+- At or above 1024 pixels: navigation rail, large player, recent panel, daily/weekly grids, metadata-only counts, and keyboard-friendly controls.
 - Resizing switches layouts without user-agent sniffing.
 - Only the visible video plays. Background, navigated-away, and off-screen videos pause.
 - Browser rules can block autoplay and always control audible autoplay. The UI handles this honestly.
@@ -54,6 +54,7 @@ POST /api/videos/{id}/preferences
 ```
 
 Media supports `Accept-Ranges: bytes`, correct `206`/`Content-Range` responses, suffix and open-ended ranges, and `416` for malformed, multiple, or unsatisfiable requests.
+Catalog responses include bounded, non-sensitive status counts so the UI can distinguish an unmounted share, missing index, invalid metadata, incomplete bundles, and a genuinely empty library without exposing filenames.
 
 ## Test locally
 
@@ -63,6 +64,10 @@ python -m venv .venv
 .venv/bin/ruff check .
 .venv/bin/mypy personal_video_studio/app
 .venv/bin/pytest
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm e2e
 ```
 
 Browser tests use deterministic synthetic metadata and media only. Visual baselines cover phone and desktop layouts plus loading, empty, and error states. Private installed-system captures must stay outside this repository and CI artifact paths.

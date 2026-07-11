@@ -34,6 +34,7 @@ jobs:
       - run: python -m pip install bandit==1.8.5 pip-audit==2.9.0
       - run: bandit -q -lll -r personal_video_studio/app
       - run: pip-audit -r personal_video_studio/requirements.lock
+      - run: python -m pip install --require-hashes -r personal_video_studio/requirements.lock
       - run: python -m pip install pip-licenses==5.0.0 && pip-licenses --fail-on='GPL-3.0-only;AGPL-3.0-only'
   codeql:
     runs-on: ubuntu-24.04
@@ -49,7 +50,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - run: docker build --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.22@sha256:40a638aaea1a0f3784811f17af67540a02da74f219a8ffe1f4ee6aa1221f3bc6 -t local/personal-video-studio:scan personal_video_studio
+      - run: docker build --build-arg BUILD_VERSION=0.2.0 --build-arg BUILD_ARCH=amd64 -t local/personal-video-studio:scan personal_video_studio
       - uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
         with:
           image-ref: local/personal-video-studio:scan

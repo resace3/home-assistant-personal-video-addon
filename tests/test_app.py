@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import re
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -8,6 +10,16 @@ from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from personal_video_studio.app import server
+
+
+def test_release_versions_are_consistent() -> None:
+    root = Path(__file__).parents[1]
+    project = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
+    addon_text = (root / "personal_video_studio" / "config.yaml").read_text(encoding="utf-8")
+    addon_version = re.search(r'^version: "([^"]+)"$', addon_text, re.MULTILINE)
+    assert addon_version is not None
+    package = json.loads((root / "package.json").read_text(encoding="utf-8"))
+    assert project["project"]["version"] == addon_version.group(1) == package["version"]
 
 
 @pytest.fixture()
@@ -45,7 +57,10 @@ def test_health_and_security_headers(client: TestClient) -> None:
     response = client.get("/api/health")
     assert response.status_code == 200
     assert response.json()["video_count"] == 1
+    assert response.json()["version"] == server.APP_VERSION
+    assert response.json()["catalog_state"] == "ready"
     assert "default-src 'self'" in response.headers["content-security-policy"]
+    assert response.headers["cache-control"] == "no-store"
     assert "SUPERVISOR_TOKEN" not in response.text
 
 
@@ -53,6 +68,8 @@ def test_paginated_daily_catalog(client: TestClient) -> None:
     payload = client.get("/api/videos", params={"period": "daily", "page": 1, "page_size": 10}).json()
     assert payload["total"] == 1
     assert payload["items"][0]["id"] == "daily-2026-07-10"
+    assert payload["catalog"]["state"] == "ready"
+    assert payload["catalog"]["expected_index"] == "/share/personal_video_studio/indexes/all.json"
 
 
 @pytest.mark.parametrize(
@@ -72,7 +89,7 @@ def test_range_streaming(client: TestClient, header: str, status: int, content: 
 
 
 def test_unsatisfiable_and_multiple_ranges_return_416(client: TestClient) -> None:
-    for header in ("bytes=9999-", "bytes=0-1,3-4", "widgets=0-1"):
+    for header in ("bytes=9999-", "bytes=0-1,3-4", "widgets=0-1", "bytes= 1-2", "bytes=1 -2", "bytes=-0", "bytes=-"):
         response = client.get("/api/videos/daily-2026-07-10/stream", headers={"Range": header})
         assert response.status_code == 416
         assert response.headers["content-range"] == "bytes */2048"
@@ -94,10 +111,14 @@ def test_preferences_require_same_origin_header(client: TestClient) -> None:
     assert client.get("/api/videos/daily-2026-07-10").json()["liked"] is True
 
 
-def test_corrupt_or_oversized_catalog_fails_closed(client: TestClient, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_corrupt_or_oversized_catalog_fails_closed(
+    client: TestClient, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     root = Path(server._media_root())
     (root / "indexes" / "all.json").write_text("not-json", encoding="utf-8")
-    assert client.get("/api/videos").json()["items"] == []
+    payload = client.get("/api/videos").json()
+    assert payload["items"] == []
+    assert payload["catalog"]["state"] == "index_invalid"
 
 
 def test_unknown_id_and_encoded_traversal_are_not_resolved(client: TestClient) -> None:
@@ -126,4 +147,93 @@ def test_catalog_rejects_absolute_and_noncanonical_paths(path: str) -> None:
 def test_direct_non_ingress_peer_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("ALLOW_DIRECT", raising=False)
     direct = TestClient(server.app, client=("203.0.113.10", 50000))
-    assert direct.get("/api/health").status_code == 403
+    response = direct.get("/api/health")
+    assert response.status_code == 403
+    assert response.headers["cache-control"] == "no-store"
+    assert response.headers["x-content-type-options"] == "nosniff"
+
+
+def test_canonical_home_assistant_share_path_is_not_shared(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("VIDEO_ROOT", raising=False)
+    assert server._media_root() == Path("/share/personal_video_studio")
+    assert server._media_root() != Path("/shared/personal_video_studio")
+
+
+def test_catalog_reports_missing_mount_and_index(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    root = tmp_path / "missing"
+    monkeypatch.setenv("VIDEO_ROOT", str(root))
+    response = TestClient(server.app).get("/api/videos")
+    assert response.json()["catalog"]["state"] == "media_root_missing"
+    root.mkdir()
+    response = TestClient(server.app).get("/api/videos")
+    assert response.json()["catalog"]["state"] == "index_missing"
+
+
+def test_runner_schema_v1_fields_are_compatible(client: TestClient) -> None:
+    root = Path(server._media_root())
+    path = root / "indexes" / "all.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload[0].update(
+        {
+            "period_start": "2026-07-09T12:00:00Z",
+            "period_end": "2026-07-10T12:00:00Z",
+            "schema_version": 1,
+        }
+    )
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    item = client.get("/api/videos").json()["items"][0]
+    assert item["schema_version"] == 1
+    assert item["period_start"] == "2026-07-09T12:00:00Z"
+    assert item["period_end"] == "2026-07-10T12:00:00Z"
+
+
+def test_partial_catalog_keeps_valid_runner_entries(client: TestClient) -> None:
+    root = Path(server._media_root())
+    path = root / "indexes" / "all.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload.append({"id": "invalid-entry"})
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    response = client.get("/api/videos").json()
+    assert [item["id"] for item in response["items"]] == ["daily-2026-07-10"]
+    assert response["catalog"]["state"] == "partial"
+    assert response["catalog"]["invalid"] == 1
+
+
+def test_missing_or_empty_assets_are_not_advertised(client: TestClient) -> None:
+    root = Path(server._media_root())
+    video = root / "daily" / "2026" / "07" / "daily-2026-07-10.mp4"
+    video.write_bytes(b"")
+    response = client.get("/api/videos").json()
+    assert response["items"] == []
+    assert response["catalog"]["state"] == "no_usable_entries"
+    assert response["catalog"]["unavailable"] == 1
+    assert client.get("/api/videos/daily-2026-07-10/stream").status_code == 404
+
+
+def test_duplicate_catalog_ids_are_ignored(client: TestClient) -> None:
+    root = Path(server._media_root())
+    path = root / "indexes" / "all.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload.append(payload[0])
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    response = client.get("/api/videos").json()
+    assert len(response["items"]) == 1
+    assert response["catalog"]["state"] == "partial"
+    assert response["catalog"]["duplicates"] == 1
+
+
+def test_catalog_rejects_period_directory_mismatch() -> None:
+    payload = {
+        "id": "daily-safe-test",
+        "type": "daily",
+        "title": "Synthetic",
+        "created_at": "2026-07-10T12:00:00Z",
+        "duration_seconds": 60,
+        "video_filename": "safe.mp4",
+        "thumbnail_filename": "safe.webp",
+        "captions_filename": "safe.vtt",
+        "relative_directory": "weekly/2026",
+        "generation_status": "complete",
+    }
+    with pytest.raises(ValidationError):
+        server.CatalogVideo.model_validate(payload)

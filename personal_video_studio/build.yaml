@@ -1,8 +1,0 @@
-build_from:
-  aarch64: ghcr.io/home-assistant/aarch64-base-python:3.12-alpine3.22
-  amd64: ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.22
-labels:
-  org.opencontainers.image.title: Personal Video Studio
-  org.opencontainers.image.description: Private Home Assistant personal video viewer
-  org.opencontainers.image.source: https://github.com/resace3/home-assistant-personal-video-addon
-  org.opencontainers.image.licenses: Apache-2.0

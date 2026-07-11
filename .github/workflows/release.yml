@@ -16,6 +16,12 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install -e '.[dev]' cyclonedx-bom && ruff check . && mypy personal_video_studio/app && pytest -q
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: "22.17.0"
+      - run: corepack enable && pnpm install --frozen-lockfile
+      - run: pnpm lint && pnpm typecheck && pnpm test
+      - run: pnpm exec playwright install --with-deps chromium && pnpm e2e
       - run: >-
           test "v$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml","rb"))["project"]["version"])')" = "$GITHUB_REF_NAME"
           && grep -q "version: \"${GITHUB_REF_NAME#v}\"" personal_video_studio/config.yaml
@@ -24,7 +30,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: tar --exclude='.git' --exclude='.venv' --exclude='node_modules' --exclude='test-results' -czf personal-video-studio-${{ github.ref_name }}.tar.gz personal_video_studio repository.yaml README.md LICENSE
-      - run: docker build --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-python:3.12-alpine3.21@sha256:8c7a31710f6ed8aeae241b20582a928604d3c32529b826aea7613fdae17047b7 -t local/personal-video-studio:release personal_video_studio
+      - run: docker build --build-arg BUILD_VERSION="${GITHUB_REF_NAME#v}" --build-arg BUILD_ARCH=amd64 -t local/personal-video-studio:release personal_video_studio
       - uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
         with:
           image-ref: local/personal-video-studio:release

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0
+
+- Add actionable catalog diagnostics for missing `/share` mounts, missing or invalid indexes, and unavailable media bundles.
+- Validate the runner's schema-v1 timestamps and period metadata while retaining only safe, complete catalog entries.
+- Tighten single-range parsing and prevent empty or non-regular assets from being advertised.
+- Keep all browser requests relative to the randomized Ingress base path and improve autoplay, reduced-motion, accessibility, and responsive settings behavior.
+- Publish a pinned multi-architecture image with a security-upgraded Debian base.
+
 ## 0.1.2
 
 - Use Home Assistant Supervisor's standard add-on confinement instead of an incomplete custom AppArmor profile that blocked the base init system.
