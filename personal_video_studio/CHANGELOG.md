@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Fix tag-gated browser release validation so the prebuilt image can be published safely.
+
 ## 0.2.0
 
 - Add actionable catalog diagnostics for missing `/share` mounts, missing or invalid indexes, and unavailable media bundles.

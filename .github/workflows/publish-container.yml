@@ -31,6 +31,8 @@ jobs:
       - run: corepack enable && pnpm install --frozen-lockfile
       - run: pnpm lint && pnpm typecheck && pnpm test
       - run: pnpm exec playwright install --with-deps chromium
+      - run: python -m venv .venv && .venv/bin/pip install -e '.[dev]'
+      - run: .venv/bin/python tests/create_e2e_fixture.py
       - run: pnpm e2e
   scan:
     runs-on: ubuntu-24.04
