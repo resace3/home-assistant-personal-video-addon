@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+- Install FFmpeg in the release validator before creating browser-test media.
+
 ## 0.2.1
 
 - Fix tag-gated browser release validation so the prebuilt image can be published safely.

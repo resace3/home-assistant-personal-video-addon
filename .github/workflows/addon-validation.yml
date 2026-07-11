@@ -40,11 +40,11 @@ jobs:
           push: false
           tags: local/personal-video-studio:${{ matrix.arch }}
           build-args: |
-            BUILD_VERSION=0.2.1
+            BUILD_VERSION=0.2.2
             BUILD_ARCH=${{ matrix.arch }}
       - name: Load and health-test architecture under QEMU
         run: |
-          docker buildx build --platform '${{ matrix.platform }}' --load --build-arg BUILD_VERSION=0.2.1 --build-arg 'BUILD_ARCH=${{ matrix.arch }}' -t local/personal-video-studio:${{ matrix.arch }} personal_video_studio
+          docker buildx build --platform '${{ matrix.platform }}' --load --build-arg BUILD_VERSION=0.2.2 --build-arg 'BUILD_ARCH=${{ matrix.arch }}' -t local/personal-video-studio:${{ matrix.arch }} personal_video_studio
           mkdir -p /tmp/studio-share/personal_video_studio/indexes /tmp/studio-data
           echo '[]' > /tmp/studio-share/personal_video_studio/indexes/all.json
           docker run -d --name studio-${{ matrix.arch }} -p 8765:8099 -e ALLOW_DIRECT=1 -v /tmp/studio-share:/share:ro -v /tmp/studio-data:/data local/personal-video-studio:${{ matrix.arch }}
