@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.3
+
+- Correct the tag release linter path and retain strict failure for patchable
+  High and Critical container vulnerabilities.
+
 ## 0.2.2
 
 - Install FFmpeg in the release validator before creating browser-test media.

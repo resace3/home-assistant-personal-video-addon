@@ -1,5 +1,5 @@
 name: Personal Video Studio
-version: "0.2.2"
+version: "0.2.3"
 slug: personal_video_studio
 description: Private mobile-first and desktop video library for Home Assistant
 url: https://github.com/resace3/home-assistant-personal-video-addon

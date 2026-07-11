@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.3 - 2026-07-10
+
+- Corrected the tag release linter path and aligned its vulnerability scan with
+  the existing PR and image-publish policy for unfixable upstream findings.
+
 ## 0.2.2 - 2026-07-10
 
 - Install FFmpeg before generating the synthetic browser fixture in tag-gated release jobs.
