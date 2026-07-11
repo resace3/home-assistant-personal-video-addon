@@ -15,8 +15,8 @@ importers:
         specifier: 1.55.1
         version: 1.55.1
       axe-core:
-        specifier: 4.10.3
-        version: 4.10.3
+        specifier: 4.12.1
+        version: 4.12.1
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -35,6 +35,10 @@ packages:
 
   axe-core@4.10.3:
     resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
+    engines: {node: '>=4'}
+
+  axe-core@4.12.1:
+    resolution: {integrity: sha512-s7iGf5GaVMxEG0ENN9x+xTr7GFZCb1ZP/1uATUpCEK2X78nDB3RwbtFCo9pGAf9ru+VwoQ464DkaLEeRM08wJA==}
     engines: {node: '>=4'}
 
   fsevents@2.3.2:
@@ -69,6 +73,8 @@ snapshots:
       playwright: 1.55.1
 
   axe-core@4.10.3: {}
+
+  axe-core@4.12.1: {}
 
   fsevents@2.3.2:
     optional: true
