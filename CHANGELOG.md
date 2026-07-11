@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 - 2026-07-10
+
+- Install FFmpeg before generating the synthetic browser fixture in tag-gated release jobs.
+
 ## 0.2.1 - 2026-07-10
 
 - Create the repository virtual environment and synthetic fixture before tag-gated Playwright release tests.
