@@ -1,2 +1,1 @@
 """Secure Ingress web application."""
-

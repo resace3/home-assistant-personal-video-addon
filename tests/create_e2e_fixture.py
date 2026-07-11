@@ -18,16 +18,36 @@ def main() -> None:
         video = folder / f"{identifier}.mp4"
         subprocess.run(
             [
-                "ffmpeg", "-y", "-f", "lavfi", "-i", f"color=c={color}:s=240x426:r=12:d=60",
-                "-f", "lavfi", "-i", "sine=frequency=220:sample_rate=24000:duration=60",
-                "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p", "-c:a", "aac",
-                "-movflags", "+faststart", "-shortest", str(video),
+                "ffmpeg",
+                "-y",
+                "-f",
+                "lavfi",
+                "-i",
+                f"color=c={color}:s=240x426:r=12:d=60",
+                "-f",
+                "lavfi",
+                "-i",
+                "sine=frequency=220:sample_rate=24000:duration=60",
+                "-c:v",
+                "libx264",
+                "-preset",
+                "ultrafast",
+                "-pix_fmt",
+                "yuv420p",
+                "-c:a",
+                "aac",
+                "-movflags",
+                "+faststart",
+                "-shortest",
+                str(video),
             ],
             check=True,
             capture_output=True,
         )
         thumbnail = folder / f"{identifier}.webp"
-        subprocess.run(["ffmpeg", "-y", "-i", str(video), "-frames:v", "1", str(thumbnail)], check=True, capture_output=True)
+        subprocess.run(
+            ["ffmpeg", "-y", "-i", str(video), "-frames:v", "1", str(thumbnail)], check=True, capture_output=True
+        )
         captions = folder / f"{identifier}.vtt"
         captions.write_text("WEBVTT\n\n00:00.000 --> 00:10.000\nSynthetic private reflection\n", encoding="utf-8")
         entries.append(

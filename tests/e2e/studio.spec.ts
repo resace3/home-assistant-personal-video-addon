@@ -16,7 +16,7 @@ test('mobile daily and weekly libraries work', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Library', exact: true }).click();
   await expect(page.getByRole('button', { name: /Synthetic Daily Reflection/ })).toBeVisible();
-  await page.getByRole('tab', { name: 'Weekly Videos' }).click();
+  await page.getByRole('button', { name: 'Weekly Videos' }).click();
   await expect(page.getByRole('button', { name: /Synthetic Weekly Reflection/ })).toBeVisible();
   await page.screenshot({ path: 'test-results/mobile-weekly-library.png' });
 });
@@ -81,4 +81,22 @@ test('empty and error states are stable synthetic visuals', async ({ page }) => 
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Videos are temporarily unavailable' })).toBeVisible();
   await page.screenshot({ path: 'test-results/error-state.png' });
+});
+
+test('storage diagnostics distinguish /share from /shared', async ({ page }) => {
+  await page.route('**/api/videos?page_size=50', (route) => route.fulfill({
+    contentType: 'application/json',
+    body: JSON.stringify({
+      items: [], total: 0, page: 1, page_size: 50,
+      catalog: {
+        state: 'media_root_missing', usable: 0, indexed: 0, invalid: 0,
+        unavailable: 0, duplicates: 0,
+        expected_index: '/share/personal_video_studio/indexes/all.json',
+      },
+    }),
+  }));
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Video storage is not mounted' })).toBeVisible();
+  await expect(page.getByText('/share/personal_video_studio', { exact: false })).toBeVisible();
+  await expect(page.getByText('/shared is different', { exact: false })).toBeVisible();
 });
