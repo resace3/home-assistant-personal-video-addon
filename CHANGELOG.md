@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 - 2026-07-10
+
+- Create the repository virtual environment and synthetic fixture before tag-gated Playwright release tests.
+
 ## 0.2.0 - 2026-07-10
 
 - Explain missing mounts, indexes, invalid metadata, and unavailable media instead of collapsing every problem into an empty library.
