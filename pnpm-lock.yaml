@@ -10,10 +10,10 @@ importers:
     devDependencies:
       '@axe-core/playwright':
         specifier: 4.10.2
-        version: 4.10.2(playwright-core@1.55.1)
+        version: 4.10.2(playwright-core@1.63.0)
       '@playwright/test':
-        specifier: 1.55.1
-        version: 1.55.1
+        specifier: 1.63.0
+        version: 1.63.0
       axe-core:
         specifier: 4.10.3
         version: 4.10.3
@@ -28,28 +28,23 @@ packages:
     peerDependencies:
       playwright-core: '>= 1.0.0'
 
-  '@playwright/test@1.55.1':
-    resolution: {integrity: sha512-IVAh/nOJaw6W9g+RJVlIQJ6gSiER+ae6mKQ5CX1bERzQgbC1VSeBlwdvczT7pxb0GWiyrxH4TGKbMfDb4Sq/ig==}
-    engines: {node: '>=18'}
+  '@playwright/test@1.63.0':
+    resolution: {integrity: sha512-oxMK4vllB9RK5NQ2l1pq1IfOf2AvnEuj/vYGDj0H2nMtmtZpKtCwt/l00GEO6xjGfpBNAvjovvYdCm50dRQkpQ==}
+    engines: {node: '>=20'}
     hasBin: true
 
   axe-core@4.10.3:
     resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
     engines: {node: '>=4'}
 
-  fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-
-  playwright-core@1.55.1:
-    resolution: {integrity: sha512-Z6Mh9mkwX+zxSlHqdr5AOcJnfp+xUWLCt9uKV18fhzA8eyxUd8NUWzAjxUh55RZKSYwDGX0cfaySdhZJGMoJ+w==}
-    engines: {node: '>=18'}
+  playwright-core@1.63.0:
+    resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
+    engines: {node: '>=20'}
     hasBin: true
 
-  playwright@1.55.1:
-    resolution: {integrity: sha512-cJW4Xd/G3v5ovXtJJ52MAOclqeac9S/aGGgRzLabuF8TnIb6xHvMzKIa6JmrRzUkeXJgfL1MhukP0NK6l39h3A==}
-    engines: {node: '>=18'}
+  playwright@1.63.0:
+    resolution: {integrity: sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==}
+    engines: {node: '>=20'}
     hasBin: true
 
   typescript@5.8.3:
@@ -59,26 +54,21 @@ packages:
 
 snapshots:
 
-  '@axe-core/playwright@4.10.2(playwright-core@1.55.1)':
+  '@axe-core/playwright@4.10.2(playwright-core@1.63.0)':
     dependencies:
       axe-core: 4.10.3
-      playwright-core: 1.55.1
+      playwright-core: 1.63.0
 
-  '@playwright/test@1.55.1':
+  '@playwright/test@1.63.0':
     dependencies:
-      playwright: 1.55.1
+      playwright: 1.63.0
 
   axe-core@4.10.3: {}
 
-  fsevents@2.3.2:
-    optional: true
+  playwright-core@1.63.0: {}
 
-  playwright-core@1.55.1: {}
-
-  playwright@1.55.1:
+  playwright@1.63.0:
     dependencies:
-      playwright-core: 1.55.1
-    optionalDependencies:
-      fsevents: 2.3.2
+      playwright-core: 1.63.0
 
   typescript@5.8.3: {}
